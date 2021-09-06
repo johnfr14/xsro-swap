@@ -29,8 +29,10 @@ const Swap = () => {
     onClose: onCloseWrongNetworkModal,
   } = useDisclosure();
 
-  let balance = web3State.balance;
-  let balanceRounded = Math.round(balance * 1000) / 1000;
+  let balanceEth = web3State.balance;
+  let balanceXsro = 0;
+  let balanceRoundedEth = Math.round(balanceEth * 100) / 100;
+  let balanceRoundedXsro = Math.round(balanceXsro * 100) / 100;
 
   const [amount, setAmount] = useState();
   const [amountInFromCurrency, setAmountInFromCurrency] = useState(true);
@@ -124,7 +126,7 @@ const Swap = () => {
                 <Flex>
                   <Center>
                     <Text mr="5px" fontSize="xs">
-                      Solde : {balanceRounded} ETH
+                      Solde : {balanceRoundedEth} ETH
                     </Text>
                     <Button colorScheme="yellow" size="xs">
                       Max
@@ -165,10 +167,21 @@ const Swap = () => {
                   color={useColorModeValue("gray.900", "white")}
                   size="sm"
                 >
-                  SRO
+                  XSRO
                 </Button>
               </Flex>
             </Stack>
+            {web3State.isLogged && (
+              <>
+                <Flex>
+                  <Center>
+                    <Text mr="5px" fontSize="xs">
+                      Solde : {balanceRoundedXsro} XSRO
+                    </Text>
+                  </Center>
+                </Flex>
+              </>
+            )}
           </Box>
 
           <Box>

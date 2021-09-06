@@ -37,8 +37,10 @@ const MetaMaskInfo = () => {
     onClose: onCloseWrongNetworkModal,
   } = useDisclosure();
 
-  let balance = web3State.balance;
-  let balanceRounded = Math.round(balance * 100) / 100;
+  let balanceEth = web3State.balance;
+  let balanceXsro = 0;
+  let balanceRoundedEth = Math.round(balanceEth * 100) / 100;
+  let balanceRoundedXsro = Math.round(balanceXsro * 100) / 100;
 
   return (
     <>
@@ -86,7 +88,12 @@ const MetaMaskInfo = () => {
           <SubstrAdress dataAdress={web3State.account} />
         </Button>
 
-        <Box display={{ base: "none", md: "flex" }}>{balanceRounded} ETH</Box>
+        <Box display={{ base: "none", md: "flex" }}>
+          {balanceRoundedEth} ETH
+        </Box>
+        <Box display={{ base: "none", md: "flex" }}>
+          {balanceRoundedXsro} XSRO
+        </Box>
         {web3State.chainId === 4 ? (
           <Box display={{ base: "none", md: "flex" }} color="#f3b71e">
             {web3State.networkName}
