@@ -67,7 +67,7 @@ const Swap = () => {
           <ModalHeader>Wrong Network</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb="5">
-            Please connect to the appropriate Ethereum network.
+            Please connect to the appropriate Rinkeby network.
           </ModalBody>
         </ModalContent>
       </Modal>
