@@ -290,6 +290,7 @@ const Swap = () => {
                 alignItems="center"
                 justifyContent="center"
                 textAlign="center"
+                disabled={!(amount.from > 0)}
               >
                 Swap
               </Button>
