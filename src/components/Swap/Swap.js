@@ -31,7 +31,7 @@ const Swap = () => {
   const swap = useContract(SwapAddress, SwapAbi);
   const xsro = useContract(xSROAddress, xSROAbi);
   const toast = useToast();
-  const [userBalance, setUserBalance] = useState();
+  const [userBalance, setUserBalance] = useState({roundedXsro: 0, roundedEth: 0});
   const [rate, setRate] = useState();
   const [transactionLoading, setTransactionLoading] = useState(false);
   const [amount, setAmount] = useState({from: 0, to: 0});
