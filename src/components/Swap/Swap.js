@@ -126,6 +126,29 @@ const Swap = () => {
     }
   }, [xsro, web3State.account, web3State.balance, toast]);
 
+  useEffect(() => {
+    if (swap) {
+      const listener = (swapper, ethAmount, sroAmount) => {
+        toast({
+          title: "Tokens Swapped",
+          description: `From: ${swapper}, ETH pay: ${ethers.utils.formatEther(
+            ethAmount
+          )}, xSRO received: ${ethers.utils.formatEther(sroAmount)}`,
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+      };
+      const filter = swap.filters.Swapped(web3State.account);
+      swap.on(filter, listener);
+      return () => {
+        swap.off(filter, listener);
+      };
+    }
+  }, [swap, web3State.account, toast]);
+
+  // event listen setRate
+
   return (
     <>
       <Modal
