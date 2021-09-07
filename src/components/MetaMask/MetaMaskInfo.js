@@ -1,5 +1,8 @@
-import { useContext } from "react";
-import { Web3Context } from "web3-hooks";
+import { useContext, useState, useEffect } from "react";
+import { Web3Context, useContract } from "web3-hooks";
+// contracts/ethers
+import { xSROAddress, xSROAbi } from "../../contracts/xSRO";
+import { ethers } from "ethers";
 
 import {
   HStack,
@@ -24,6 +27,8 @@ import { SubstrAdress } from "../index";
 
 const MetaMaskInfo = () => {
   const [web3State] = useContext(Web3Context);
+  const xsro = useContract(xSROAddress, xSROAbi);
+  const [userBalance, setUserBalance] = useState();
 
   const {
     isOpen: isOpenAdressInfoModal,
@@ -38,9 +43,24 @@ const MetaMaskInfo = () => {
   } = useDisclosure();
 
   let balanceEth = web3State.balance;
-  let balanceXsro = 0;
+  let balanceXsro = userBalance;
   let balanceRoundedEth = Math.round(balanceEth * 100) / 100;
   let balanceRoundedXsro = Math.round(balanceXsro * 100) / 100;
+
+  // xsro user balance
+  useEffect(() => {
+    if (xsro) {
+      const getInfo = async () => {
+        try {
+          const balance = await xsro.balanceOf(web3State.account);
+          setUserBalance(ethers.utils.formatEther(balance));
+        } catch (e) {
+          console.error(e.message);
+        }
+      };
+      getInfo();
+    }
+  }, [xsro, web3State.account, web3State.balance]);
 
   return (
     <>
