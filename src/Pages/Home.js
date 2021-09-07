@@ -1,4 +1,4 @@
-import { Flex, Heading, useColorModeValue } from "@chakra-ui/react";
+import { Flex, useColorModeValue } from "@chakra-ui/react";
 import { HeaderComp as Header, Swap } from "../components";
 
 function HomePage() {
