@@ -30,10 +30,12 @@ const Swap = () => {
   // contracts & xSRO balance
   const swap = useContract(SwapAddress, SwapAbi);
   const xsro = useContract(xSROAddress, xSROAbi);
+  const toast = useToast();
   const [userBalance, setUserBalance] = useState();
   const [rate, setRate] = useState();
-  const toast = useToast();
   const [transactionLoading, setTransactionLoading] = useState(false);
+  const [amount, setAmount] = useState({from: 0, to: 0});
+  let chainId = web3State.chainId === 4;
 
   const {
     isOpen: isOpenWrongNetworkModal,
@@ -41,35 +43,19 @@ const Swap = () => {
     onClose: onCloseWrongNetworkModal,
   } = useDisclosure();
 
-  let balanceEth = web3State.balance;
-  let balanceXsro = userBalance;
-  let balanceRoundedEth = Math.round(balanceEth * 100) / 100;
-  let balanceRoundedXsro = Math.round(balanceXsro * 100) / 100;
-
-  // uncontrolled
-  const [amount, setAmount] = useState();
-  const [amountInFromCurrency, setAmountInFromCurrency] = useState(true);
-
-  let toAmount, fromAmount;
-  if (amountInFromCurrency) {
-    fromAmount = amount;
-    toAmount = amount * rate;
-  } else {
-    toAmount = amount;
-    fromAmount = amount / rate;
+  // uncontrolle
+  const handleMaxButton = () => {
+    setAmount({from: web3State.balance, to: web3State.balance * rate})
   }
 
-  function handleFromAmountChange(e) {
-    setAmount(e.target.value);
-    setAmountInFromCurrency(true);
+  const handleChange = (e) => {
+    console.log(e.target.name)
+    if (e.target.name === 'from') {
+      setAmount({from: e.target.value, to: e.target.value * rate})
+    } else {
+      setAmount({from: e.target.value / rate, to: e.target.value})
+    }
   }
-
-  function handleToAmountChange(e) {
-    setAmount(e.target.value);
-    setAmountInFromCurrency(false);
-  }
-
-  let chainId = web3State.chainId === 4;
 
   // swap
   const handleSwapToken = async () => {
@@ -124,7 +110,10 @@ const Swap = () => {
       const getInfo = async () => {
         try {
           const balance = await xsro.balanceOf(web3State.account);
-          setUserBalance(ethers.utils.formatEther(balance));
+          setUserBalance({
+            roundedXsro: Math.round(ethers.utils.formatEther(balance) * 100) / 100,
+            roundedEth: Math.round(web3State.balance * 100) / 100,
+          });
         } catch (e) {
           toast({
             title: `${e.message}`,
@@ -205,15 +194,15 @@ const Swap = () => {
               <Flex color="white">
                 <Input
                   variant="unstyled"
-                  name="inputIN"
+                  name="from"
                   type="number"
                   placeholder="0.0"
                   mr="5px"
                   fontSize="2xl"
                   fontWeight="bold"
                   color={useColorModeValue("gray.900", "white")}
-                  value={fromAmount}
-                  onChange={handleFromAmountChange}
+                  value={amount.from}
+                  onChange={handleChange}
                   id="swap"
                   required
                 />
@@ -230,9 +219,9 @@ const Swap = () => {
                 <Flex>
                   <Center>
                     <Text mr="5px" fontSize="xs">
-                      Solde : {balanceRoundedEth} ETH
+                      Solde : {userBalance.roundedEth} ETH
                     </Text>
-                    <Button colorScheme="yellow" size="xs">
+                    <Button onClick={handleMaxButton} colorScheme="yellow" size="xs">
                       Max
                     </Button>
                   </Center>
@@ -256,15 +245,15 @@ const Swap = () => {
               <Flex color="white">
                 <Input
                   variant="unstyled"
-                  name="inputOUT"
+                  name="to"
                   type="number"
                   placeholder="0.0"
                   mr="5px"
                   fontSize="2xl"
                   fontWeight="bold"
                   color={useColorModeValue("gray.900", "white")}
-                  value={toAmount}
-                  onChange={handleToAmountChange}
+                  value={amount.to}
+                  onChange={handleChange}
                   required
                 />
                 <Button
@@ -280,7 +269,7 @@ const Swap = () => {
                 <Flex>
                   <Center>
                     <Text mr="5px" fontSize="xs">
-                      Solde : {balanceRoundedXsro} XSRO
+                      Solde : {userBalance.roundedXsro} XSRO
                     </Text>
                   </Center>
                 </Flex>
