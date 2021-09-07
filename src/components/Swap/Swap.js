@@ -31,10 +31,13 @@ const Swap = () => {
   const swap = useContract(SwapAddress, SwapAbi);
   const xsro = useContract(xSROAddress, xSROAbi);
   const toast = useToast();
-  const [userBalance, setUserBalance] = useState({roundedXsro: 0, roundedEth: 0});
+  const [userBalance, setUserBalance] = useState({
+    roundedXsro: 0,
+    roundedEth: 0,
+  });
   const [rate, setRate] = useState();
   const [transactionLoading, setTransactionLoading] = useState(false);
-  const [amount, setAmount] = useState({from: 0, to: 0});
+  const [amount, setAmount] = useState({ from: 0, to: 0 });
   let chainId = web3State.chainId === 4;
 
   const {
@@ -45,16 +48,16 @@ const Swap = () => {
 
   // uncontrolle
   const handleMaxButton = () => {
-    setAmount({from: web3State.balance, to: web3State.balance * rate})
-  }
+    setAmount({ from: web3State.balance, to: web3State.balance * rate });
+  };
 
   const handleChange = (e) => {
-    if (e.target.name === 'from') {
-      setAmount({from: e.target.value, to: e.target.value * rate})
+    if (e.target.name === "from") {
+      setAmount({ from: e.target.value, to: e.target.value * rate });
     } else {
-      setAmount({from: e.target.value / rate, to: e.target.value})
+      setAmount({ from: e.target.value / rate, to: e.target.value });
     }
-  }
+  };
 
   // swap
   const handleSwapToken = async () => {
@@ -110,7 +113,8 @@ const Swap = () => {
         try {
           const balance = await xsro.balanceOf(web3State.account);
           setUserBalance({
-            roundedXsro: Math.round(ethers.utils.formatEther(balance) * 100) / 100,
+            roundedXsro:
+              Math.round(ethers.utils.formatEther(balance) * 100) / 100,
             roundedEth: Math.round(web3State.balance * 100) / 100,
           });
         } catch (e) {
@@ -220,7 +224,11 @@ const Swap = () => {
                     <Text mr="5px" fontSize="xs">
                       Solde : {userBalance.roundedEth} ETH
                     </Text>
-                    <Button onClick={handleMaxButton} colorScheme="yellow" size="xs">
+                    <Button
+                      onClick={handleMaxButton}
+                      colorScheme="yellow"
+                      size="xs"
+                    >
                       Max
                     </Button>
                   </Center>
@@ -282,7 +290,8 @@ const Swap = () => {
                 mt={6}
                 isLoading={transactionLoading}
                 loadingText="In process"
-                colorScheme="yellow"
+                colorScheme={amount.from > 0 ? "yellow" : ""}
+                color={!amount.from > 0 ? "white" : "black"}
                 onClick={handleSwapToken}
                 borderRadius="5"
                 height="48px"
@@ -292,7 +301,7 @@ const Swap = () => {
                 textAlign="center"
                 disabled={!(amount.from > 0)}
               >
-                Swap
+                {amount.from > 0 ? "Swap" : "Enter an amount"}
               </Button>
             ) : (
               <Button
