@@ -21,6 +21,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
+  useToast,
 } from "@chakra-ui/react";
 import { ArrowDownIcon } from "@chakra-ui/icons";
 
@@ -31,6 +32,7 @@ const Swap = () => {
   const xsro = useContract(xSROAddress, xSROAbi);
   const [userBalance, setUserBalance] = useState();
   const [rate, setRate] = useState();
+  const toast = useToast();
 
   const {
     isOpen: isOpenWrongNetworkModal,
@@ -78,8 +80,11 @@ const Swap = () => {
       });
       await tx.wait();
     } catch (e) {
-      // toast ?
-      console.error(e.message);
+      toast({
+        title: `${e.message}`,
+        status: "error",
+        isClosable: true,
+      });
     }
   };
 
@@ -91,12 +96,16 @@ const Swap = () => {
           const rate = await swap.rate();
           setRate(rate.toNumber());
         } catch (e) {
-          console.error(e.message);
+          toast({
+            title: `${e.message}`,
+            status: "error",
+            isClosable: true,
+          });
         }
       };
       getInfo();
     }
-  }, [swap]);
+  }, [swap, toast]);
 
   // xsro user balance
   useEffect(() => {
@@ -106,12 +115,16 @@ const Swap = () => {
           const balance = await xsro.balanceOf(web3State.account);
           setUserBalance(ethers.utils.formatEther(balance));
         } catch (e) {
-          console.error(e.message);
+          toast({
+            title: `${e.message}`,
+            status: "error",
+            isClosable: true,
+          });
         }
       };
       getInfo();
     }
-  }, [xsro, web3State.account, web3State.balance]);
+  }, [xsro, web3State.account, web3State.balance, toast]);
 
   return (
     <>
