@@ -33,6 +33,7 @@ const Swap = () => {
   const [userBalance, setUserBalance] = useState();
   const [rate, setRate] = useState();
   const toast = useToast();
+  const [transactionLoading, setTransactionLoading] = useState(false);
 
   const {
     isOpen: isOpenWrongNetworkModal,
@@ -75,8 +76,15 @@ const Swap = () => {
     const amount = document.getElementById("swap").value;
     const EtherAmount = ethers.utils.parseEther(amount.toString());
     try {
+      setTransactionLoading(true);
       const tx = await swap.swapTokens({
         value: EtherAmount,
+      });
+      toast({
+        title: "Transaction in progress",
+        status: "info",
+        duration: 10000000000000,
+        isClosable: false,
       });
       await tx.wait();
     } catch (e) {
@@ -85,6 +93,8 @@ const Swap = () => {
         status: "error",
         isClosable: true,
       });
+    } finally {
+      setTransactionLoading(false);
     }
   };
 
@@ -101,6 +111,7 @@ const Swap = () => {
             status: "error",
             isClosable: true,
           });
+        } finally {
         }
       };
       getInfo();
@@ -129,6 +140,7 @@ const Swap = () => {
   useEffect(() => {
     if (swap) {
       const listener = (swapper, ethAmount, sroAmount) => {
+        toast.closeAll();
         toast({
           title: "Tokens Swapped",
           description: `From: ${swapper}, ETH pay: ${ethers.utils.formatEther(
@@ -280,6 +292,8 @@ const Swap = () => {
             {web3State.isLogged && chainId ? (
               <Button
                 mt={6}
+                isLoading={transactionLoading}
+                loadingText="In process"
                 colorScheme="yellow"
                 onClick={handleSwapToken}
                 borderRadius="5"
