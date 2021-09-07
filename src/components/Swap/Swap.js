@@ -49,7 +49,6 @@ const Swap = () => {
   }
 
   const handleChange = (e) => {
-    console.log(e.target.name)
     if (e.target.name === 'from') {
       setAmount({from: e.target.value, to: e.target.value * rate})
     } else {
