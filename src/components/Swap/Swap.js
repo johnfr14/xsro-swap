@@ -1,5 +1,9 @@
-import { useContext, useState } from "react";
-import { Web3Context } from "web3-hooks";
+import { useContext, useState, useEffect } from "react";
+import { Web3Context, useContract } from "web3-hooks";
+// contracts/ethers
+import { SwapAddress, SwapAbi } from "../../contracts/Swap";
+import { xSROAddress, xSROAbi } from "../../contracts/xSRO";
+import { ethers } from "ethers";
 
 import {
   Stack,
@@ -22,6 +26,11 @@ import { ArrowDownIcon } from "@chakra-ui/icons";
 
 const Swap = () => {
   const [web3State, login] = useContext(Web3Context);
+  // contracts & xSRO balance
+  const swap = useContract(SwapAddress, SwapAbi);
+  const xsro = useContract(xSROAddress, xSROAbi);
+  const [userBalance, setUserBalance] = useState();
+  const [rate, setRate] = useState();
 
   const {
     isOpen: isOpenWrongNetworkModal,
@@ -30,20 +39,21 @@ const Swap = () => {
   } = useDisclosure();
 
   let balanceEth = web3State.balance;
-  let balanceXsro = 0;
+  let balanceXsro = userBalance;
   let balanceRoundedEth = Math.round(balanceEth * 100) / 100;
   let balanceRoundedXsro = Math.round(balanceXsro * 100) / 100;
 
+  // uncontrolled
   const [amount, setAmount] = useState();
   const [amountInFromCurrency, setAmountInFromCurrency] = useState(true);
 
   let toAmount, fromAmount;
   if (amountInFromCurrency) {
     fromAmount = amount;
-    toAmount = amount * 10;
+    toAmount = amount * rate;
   } else {
     toAmount = amount;
-    fromAmount = amount / 10;
+    fromAmount = amount / rate;
   }
 
   function handleFromAmountChange(e) {
@@ -57,6 +67,51 @@ const Swap = () => {
   }
 
   let chainId = web3State.chainId === 4;
+
+  // swap
+  const handleSwapToken = async () => {
+    const amount = document.getElementById("swap").value;
+    const EtherAmount = ethers.utils.parseEther(amount.toString());
+    try {
+      const tx = await swap.swapTokens({
+        value: EtherAmount,
+      });
+      await tx.wait();
+    } catch (e) {
+      // toast ?
+      console.error(e.message);
+    }
+  };
+
+  // get Rate
+  useEffect(() => {
+    if (swap) {
+      const getInfo = async () => {
+        try {
+          const rate = await swap.rate();
+          setRate(rate.toNumber());
+        } catch (e) {
+          console.error(e.message);
+        }
+      };
+      getInfo();
+    }
+  }, [swap]);
+
+  // xsro user balance
+  useEffect(() => {
+    if (xsro) {
+      const getInfo = async () => {
+        try {
+          const balance = await xsro.balanceOf(web3State.account);
+          setUserBalance(ethers.utils.formatEther(balance));
+        } catch (e) {
+          console.error(e.message);
+        }
+      };
+      getInfo();
+    }
+  }, [xsro, web3State.account, web3State.balance]);
 
   return (
     <>
@@ -111,6 +166,7 @@ const Swap = () => {
                   color={useColorModeValue("gray.900", "white")}
                   value={fromAmount}
                   onChange={handleFromAmountChange}
+                  id="swap"
                   required
                 />
                 <Button
@@ -189,7 +245,7 @@ const Swap = () => {
               <Button
                 mt={6}
                 colorScheme="yellow"
-                onClick={""}
+                onClick={handleSwapToken}
                 borderRadius="5"
                 height="48px"
                 width="100%"
