@@ -1,8 +1,6 @@
 import { useContext, useState, useEffect } from "react";
-import { Web3Context, useContract } from "web3-hooks";
-// contracts/ethers
-import { SwapAddress, SwapAbi } from "../../contracts/Swap";
-import { xSROAddress, xSROAbi } from "../../contracts/xSRO";
+import { useContracts } from "../../context/ContractContext"
+import { Web3Context } from "web3-hooks";
 import { ethers } from "ethers";
 
 import {
@@ -25,11 +23,10 @@ import {
 } from "@chakra-ui/react";
 import { ArrowDownIcon } from "@chakra-ui/icons";
 
-const Swap = () => {
+export const Swap = () => {
   const [web3State, login] = useContext(Web3Context);
   // contracts & xSRO balance
-  const swap = useContract(SwapAddress, SwapAbi);
-  const xsro = useContract(xSROAddress, xSROAbi);
+  const { swap, xsro } = useContracts();
   const toast = useToast();
   const [userBalance, setUserBalance] = useState({
     roundedXsro: 0,
@@ -50,6 +47,7 @@ const Swap = () => {
   const handleMaxButton = () => {
     setAmount({ from: web3State.balance, to: web3State.balance * rate });
   };
+
 
   const handleChange = (e) => {
     if (e.target.name === "from") {
@@ -168,18 +166,7 @@ const Swap = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-      <Box
-        maxW="7xl"
-        mx={"auto"}
-        pt={5}
-        px={{ base: 2, sm: 5, md: 17 }}
-        py={4}
-        mt="50px"
-        rounded="lg"
-        shadow="lg"
-        boxShadow="2xl"
-        bg={useColorModeValue("white", "gray.900")}
-      >
+      <Box>
         <Stack
           spacing={3}
           alignItems="left"

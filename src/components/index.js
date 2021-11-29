@@ -8,7 +8,7 @@ import MetaMaskTransfer from "./MetaMask/MetaMaskTransfer";
 import Countdown from "./Countdown";
 import OwnerOptions from "./OwnerOptions";
 import ERC20Infos from "./ERC20Infos";
-import Swap from "./Swap/Swap";
+import Swap from "./Interface/Swap";
 import SubstrAdress from "./SubstrAdress/SubstrAdress";
 
 export {

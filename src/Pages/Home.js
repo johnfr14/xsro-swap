@@ -1,5 +1,6 @@
 import { Flex, useColorModeValue } from "@chakra-ui/react";
-import { HeaderComp as Header, Swap } from "../components";
+import { HeaderComp as Header } from "../components";
+import { Interface } from "../components/Interface/Interface"
 
 function HomePage() {
   return (
@@ -13,7 +14,7 @@ function HomePage() {
           "linear(gray.800 0%, gray.700 0%, gray.800 80%)"
         )}
       >
-        <Swap />
+        <Interface />
       </Flex>
     </>
   );
