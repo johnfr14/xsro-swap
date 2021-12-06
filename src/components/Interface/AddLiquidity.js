@@ -1,201 +1,27 @@
-import { useContext, useState, useEffect } from "react";
-import { WETH } from "@uniswap/sdk";
-import { TokensList } from "../../contracts/Tokens";
+import TokenInput from "./TokenInput"
+import { useContext, useState, useRef } from "react";
 import { Web3Context } from "web3-hooks";
-import { useContracts } from "../../context/ContractContext";
 import { useForm } from "react-hook-form";
-import { SearchIcon } from '@chakra-ui/icons'
-
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-} from '@chakra-ui/react'
-
-import {
-  Stack,
-  Button,
-  Box,
-  Text,
-  useColorModeValue,
-  Input,
-  InputGroup,
-  InputLeftAddon,
-  Flex,
-  Center,
-  useDisclosure,
-  useToast,
-} from "@chakra-ui/react";
+import { Box, Button } from "@chakra-ui/react";
 import { ArrowDownIcon } from "@chakra-ui/icons";
 
 const AddLiquidity = () => {
   const [web3State, login] = useContext(Web3Context);
-  const { router, factory } = useContracts();
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
-  const toast = useToast();
-  const [tokens, setTokens] = useState({token0: WETH[4], token1: null})
-  console.log(TokensList[0].symbol)
+  const [tokens, setToken] = useState({ token0: null, token1: null });
+  const input0 = useRef(0)
+  const input1 = useRef(1)
 
-  const {
-    isOpen,
-    onOpen,
-    onClose,
-  } = useDisclosure();
-
+  // const { router, factory } = useContracts();
+  // const toast = useToast();
 
   return (
     <>
-      <Modal
-        onClose={onClose}
-        isOpen={isOpen}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Wrong Network</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb="5">
-            Please connect to the appropriate Rinkeby network.
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-
-      <Modal
-        onClose={onClose}
-        isOpen={isOpen}
-        scrollBehavior={'inside'}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Tokens list</ModalHeader>
-          <ModalBody>
-            <InputGroup>
-              <InputLeftAddon><SearchIcon/></InputLeftAddon>
-              <Input placeholder='search tokens' size='md' {...register("search")}/>
-            </InputGroup>
-            {TokensList.map(el => {
-              return (
-              <Box _hover={{ boxShadow: 'dark-lg', color: "yellow.500" }} my={5} rounded='md'>
-                <Button width='100%' boxShadow='Dark-lg' borderColor='gray.200'>{el.symbol}</Button>
-              </Box>
-              )
-            })
-          }
-          </ModalBody>
-          <ModalCloseButton />
-            <Button onClick={onClose}>Close</Button>
-        </ModalContent>
-      </Modal>
-
-
-      <Box>
-        <Stack
-          spacing={3}
-          alignItems="left"
-          width={{ base: "100%", md: "400px" }}
-        >
-          <Box
-            p="6"
-            rounded="md"
-            bg={useColorModeValue("gray.100", "gray.800")}
-          >
-            <Text mb="2" textAlign="left">
-              Token 1
-            </Text>
-            <Stack spacing="6">
-              <Flex color="white">
-                <Input
-                  variant="unstyled"
-                  name="from"
-                  type="number"
-                  placeholder="0.0"
-                  mr="5px"
-                  fontSize="2xl"
-                  fontWeight="bold"
-                  color={useColorModeValue("gray.900", "white")}
-                  // value={amount.from}
-                  // onChange={handleChange}
-                  id="swap"
-                  required
-                  {...register("token0")}
-                />
-                <Button
-                  color={useColorModeValue("gray.900", "white")}
-                  size="sm"
-                  onClick={onOpen}
-                >
-                  {tokens.token0.symbol}
-                </Button>
-              </Flex>
-            </Stack>
-            {web3State.isLogged && (
-              <>
-                <Flex>
-                  <Center>
-                    <Button
-                      // onClick={handleMaxButton}
-                      colorScheme="yellow"
-                      size="xs"
-                    >
-                      Max
-                    </Button>
-                  </Center>
-                </Flex>
-              </>
-            )}
-          </Box>
-          <Box textAlign="center">
-            <ArrowDownIcon />
-          </Box>
-
-          <Box
-            p="6"
-            rounded="md"
-            bg={useColorModeValue("gray.100", "gray.800")}
-          >
-            <Text mb="2" textAlign="left">
-              Token2
-            </Text>
-            <Stack spacing="6">
-              <Flex color="white">
-                <Input
-                  variant="unstyled"
-                  name="to"
-                  type="number"
-                  placeholder="0.0"
-                  mr="5px"
-                  fontSize="2xl"
-                  fontWeight="bold"
-                  color={useColorModeValue("gray.900", "white")}
-                  // value={amount.to}
-                  // onChange={handleChange}
-                  required
-                  {...register("token1")}
-                />
-                <Button
-                  color={useColorModeValue("gray.900", "white")}
-                  size="sm"
-                  onClick={onOpen}
-                >
-                  {tokens.token1 ? tokens.token1.name : 'Select a token' }
-                </Button>
-              </Flex>
-            </Stack>
-            {web3State.isLogged && (
-              <>
-                <Flex>
-                  <Center>
-        
-                  </Center>
-                </Flex>
-              </>
-            )}
-          </Box>
-
-          <Box>
+      <form onSubmit={handleSubmit()}>
+        <TokenInput input={input0.current} setToken={setToken} tokens={tokens} token={tokens.token1} register={register} />
+        <span>+</span>
+        <TokenInput input={input1.current} setToken={setToken} tokens={tokens} token={tokens.token2} register={register}/>
+        <Box>
             {web3State.isLogged && web3State.chainId ? (
               <Button
                 mt={6}
@@ -229,9 +55,8 @@ const AddLiquidity = () => {
                 Connect Wallet
               </Button>
             )}
-          </Box>
-        </Stack>
-      </Box>
+        </Box>
+      </form>
     </>
   );
 };

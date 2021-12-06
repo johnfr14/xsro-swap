@@ -1,7 +1,7 @@
 import { ChainId, Token, WETH, Pair, TokenAmount } from "@uniswap/sdk";
 
-const chainId = ChainId.RINKEBY;
-const decimals = 18;
+export const chainId = ChainId.RINKEBY;
+export const decimals = 18;
 
 export const WBTC = new Token(chainId, '0xc06562a8663b0BE3179ae5b0408177EdE2f789ED', decimals, "WBTC", "Wrapped bitcoin");
 export const DAI =  new Token(chainId, "0x08151BF2e2F4349C449FF829F0C9f1be37fD5327", decimals, "DAI", "Dai Stablecoin");
