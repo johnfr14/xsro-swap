@@ -24,7 +24,7 @@
 
 ----
 
-<div>
+<!-- <div>
   <h2><b>À propos</b></h2>
   <h4 id="swap-about" > <b>SarahRo</b> est une place de marché en ligne qui relie les artistes et les collectionneurs grâce à la technologie Blockchain pour vendre, investir et posséder facilement des œuvres d’art et des objets de collection en toute transparence. </h4>
   <p>
@@ -44,7 +44,7 @@
     </ul>
   </ul>
   </p>
-</div>
+</div> -->
 
 ----
 
