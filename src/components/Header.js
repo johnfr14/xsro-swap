@@ -24,14 +24,6 @@ export default function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
   const [web3State, login] = useContext(Web3Context);
 
-  /*
-  useEffect(() => {
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      toggleColorMode();
-    }
-  }, []);
-  */
-
   return (
     <>
       <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>

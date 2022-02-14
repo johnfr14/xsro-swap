@@ -14,13 +14,6 @@ import {
   Input,
   Flex,
   Center,
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
   useToast,
 } from "@chakra-ui/react";
 import { ArrowDownIcon } from "@chakra-ui/icons";
@@ -40,11 +33,6 @@ const Swap = () => {
   const [amount, setAmount] = useState({ from: 0, to: 0 });
   let chainId = web3State.chainId === 4;
 
-  const {
-    isOpen: isOpenWrongNetworkModal,
-    onOpen: onOpenWrongNetworkModal,
-    onClose: onCloseWrongNetworkModal,
-  } = useDisclosure();
 
   // uncontrolle
   const handleMaxButton = () => {
@@ -155,19 +143,6 @@ const Swap = () => {
 
   return (
     <>
-      <Modal
-        isOpen={isOpenWrongNetworkModal}
-        onClose={onCloseWrongNetworkModal}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Wrong Network</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb="5">
-            Please connect to the appropriate Rinkeby network.
-          </ModalBody>
-        </ModalContent>
-      </Modal>
       <Box
         maxW="7xl"
         mx={"auto"}
@@ -285,24 +260,41 @@ const Swap = () => {
           </Box>
 
           <Box>
-            {web3State.isLogged && chainId ? (
-              <Button
-                mt={6}
-                isLoading={transactionLoading}
-                loadingText="In process"
-                colorScheme={amount.from > 0 ? "yellow" : ""}
-                color={!amount.from > 0 ? "white" : "black"}
-                onClick={handleSwapToken}
-                borderRadius="5"
-                height="48px"
-                width="100%"
-                alignItems="center"
-                justifyContent="center"
-                textAlign="center"
-                disabled={!(amount.from > 0)}
-              >
-                {amount.from > 0 ? "Swap" : "Enter an amount"}
-              </Button>
+            {web3State.isLogged ? (
+              <>
+                {chainId ? (
+                  <Button
+                    mt={6}
+                    isLoading={transactionLoading}
+                    loadingText="In process"
+                    colorScheme={amount.from > 0 ? "yellow" : ""}
+                    color={!amount.from > 0 ? "white" : "black"}
+                    onClick={handleSwapToken}
+                    borderRadius="5"
+                    height="48px"
+                    width="100%"
+                    alignItems="center"
+                    justifyContent="center"
+                    textAlign="center"
+                    disabled={!(amount.from > 0)}
+                  >
+                    {amount.from > 0 ? "Swap" : "Enter an amount"}
+                  </Button>
+                  ) : (
+                    <Button
+                      mt={6}
+                      colorScheme="red"
+                      borderRadius="5"
+                      height="48px"
+                      width="100%"
+                      alignItems="center"
+                      justifyContent="center"
+                      textAlign="center"
+                    >
+                      Connect to Rinkeby
+                    </Button>
+                  )}
+              </>
             ) : (
               <Button
                 mt={6}
@@ -313,7 +305,7 @@ const Swap = () => {
                 alignItems="center"
                 justifyContent="center"
                 textAlign="center"
-                onClick={chainId ? login : onOpenWrongNetworkModal}
+                onClick={ login }
               >
                 Connect Wallet
               </Button>
