@@ -142,7 +142,7 @@ const Swap = () => {
 
   return (
     <>
-      {userBalance.roundedEth === 0 && <Box maxW='md' borderWidth='1px' borderRadius='lg'>
+      {web3State.isLogged && web3State.balance <= 0 && <Box maxW='md' borderWidth='1px' borderRadius='lg'>
         <Container p='0.5rem' textAlign={'center'}>
           <p>👇 Don't have ETH ? Get some here 👇</p>
           <Center m={'0.5rem'}>
