@@ -15,6 +15,7 @@ import {
   Flex,
   Center,
   useToast,
+  Container,
 } from "@chakra-ui/react";
 import { ArrowDownIcon } from "@chakra-ui/icons";
 
@@ -139,10 +140,18 @@ const Swap = () => {
     }
   }, [swap, web3State.account, toast]);
 
-  // event listen setRate
-
   return (
     <>
+      {userBalance.roundedEth === 0 && <Box maxW='md' borderWidth='1px' borderRadius='lg'>
+        <Container p='0.5rem' textAlign={'center'}>
+          <p>👇 Don't have ETH ? Get some here 👇</p>
+          <Center m={'0.5rem'}>
+            <Button as='a' href="https://faucets.chain.link/rinkeby" target='_blank'>Get 0.1 ETH</Button>
+          </Center>
+          <Text fontWeight={'bold'}>Network: <Text as='i' color={'yellow.300'}>Ethereum rinkeby</Text></Text>  
+          <Text fontWeight={'bold'}>Testnet account address: <Text as='i' color={'yellow.300'}>{web3State.account}</Text></Text> 
+        </Container>
+      </Box>}
       <Box
         maxW="7xl"
         mx={"auto"}
