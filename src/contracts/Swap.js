@@ -1,4 +1,4 @@
-export const SwapAddress = "0x87962cf7726020B6c902bB2e905Af880a248ab05";
+export const SwapAddress = "0x036CB95eB493411a44B7ef342A4811495dADd9aD";
 
 export const SwapAbi = [
   {
